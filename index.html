@@ -3,84 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piazza Rappenau - Order</title>
+    <title>Piazza Rappenau - Online Order</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #5d4037; --accent: #b08968; --bg: #fffcf2; --white: #ffffff; --text: #2b2d42; --danger: #e63946; }
         body { font-family: 'Quicksand', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 120px; }
-        
-        /* Header & Hero */
-        header { background: var(--white); text-align: center; padding: 20px; border-bottom: 4px solid var(--accent); }
-        .hero-img { width: 100%; height: 180px; object-fit: cover; border-radius: 0 0 20px 20px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { font-family: 'Playfair Display', serif; color: var(--primary); margin: 0; font-size: 2rem; }
+        header { background-color: var(--white); text-align: center; padding: 20px; border-bottom: 4px solid var(--accent); position: sticky; top: 0; z-index: 100; }
+        h1 { font-family: 'Playfair Display', serif; color: var(--primary); margin: 0; font-size: 1.8rem; }
+        .subtitle { font-size: 0.7rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; }
         
         .container { max-width: 600px; margin: auto; padding: 15px; }
+        .hero-img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .category-title { border-bottom: 2px solid var(--accent); padding: 25px 0 5px; color: var(--primary); font-family: 'Playfair Display', serif; }
         
-        /* Menu Items */
-        .menu-item { background: var(--white); border-radius: 15px; padding: 15px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f0e6d2; transition: 0.3s; }
+        .menu-item { background: var(--white); border-radius: 12px; padding: 15px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f0e6d2; }
         .item-info h3 { margin: 0; font-size: 1rem; color: var(--primary); }
-        .item-info p { margin: 4px 0; font-size: 0.75rem; color: #666; }
-        .price { font-weight: 600; color: var(--accent); }
-        .add-btn { background: var(--accent); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
+        .item-info p { margin: 4px 0; font-size: 0.75rem; color: #666; line-height: 1.2; }
+        .price { font-weight: 600; color: var(--accent); display: block; margin-top: 5px; }
+        .add-btn { background: var(--accent); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; }
 
-        /* Cart Bar */
-        .cart-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: var(--primary); color: white; padding: 15px 20px; border-radius: 50px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 1000; }
-        .checkout-btn { background: #25D366; color: white; border: none; padding: 12px 22px; border-radius: 25px; font-weight: bold; cursor: pointer; }
-
-        /* Review Modal */
-        #reviewModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: white; padding: 25px; border-radius: 25px; width: 100%; max-width: 400px; max-height: 80vh; overflow-y: auto; text-align: center; }
-        .review-list { text-align: left; margin: 15px 0; }
-        .review-item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 8px 0; align-items: center; }
-        .delete-btn { color: var(--danger); font-size: 0.8rem; cursor: pointer; border: 1px solid var(--danger); padding: 2px 8px; border-radius: 5px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid var(--accent); border-radius: 12px; font-family: inherit; }
-        .send-btn { background: #25D366; color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; font-family: 'Quicksand'; outline: none; }
+        input[type="text"]:focus { border-color: var(--accent); }
+        
+        .cart-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: var(--primary); color: white; padding: 15px 20px; border-radius: 50px; display: none; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .checkout-btn { background: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 25px; font-weight: bold; cursor: pointer; }
+        
+        .confirm-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .note-text { font-size: 0.75rem; color: var(--accent); font-style: italic; display: block; margin-top: 2px; }
+        .del-x { color: var(--danger); font-weight: bold; cursor: pointer; margin-left: 10px; border: 1px solid var(--danger); border-radius: 5px; padding: 0 5px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>PIAZZA</h1>
-    <div style="font-size: 0.7rem; color: var(--accent); letter-spacing: 3px;">RAPPENAU</div>
+    <div class="subtitle">Bad Rappenau</div>
 </header>
 
-<img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1000" alt="Cafe Piazza" class="hero-img">
+<div class="container">
+    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1000" class="hero-img" alt="Piazza Cafe">
+    <div id="menu-container"></div>
+</div>
 
-<div class="container" id="menu-container"></div>
-
-<div id="reviewModal">
+<div id="noteModal" class="modal">
     <div class="modal-content">
-        <h2 style="color: var(--primary); margin-top: 0;">Deine Bestellung</h2>
-        <div class="review-list" id="review-list"></div>
-        <div style="font-weight: bold; margin: 15px 0; font-size: 1.2rem;">Gesamt: <span id="modal-total">0.00</span>€</div>
-        <input type="text" id="tableInput" placeholder="Tisch-Nummer oder Abholung">
-        <button class="send-btn" onclick="sendWhatsApp()">An WhatsApp senden</button>
-        <p style="color: #888; font-size: 0.8rem; margin-top: 15px; cursor: pointer;" onclick="closeModal()">Zurück zum Menü</p>
+        <h3 id="noteItemName" style="color:var(--primary); margin-top:0;">Optionen</h3>
+        <p style="font-size:0.8rem; color:#777;">Wünsche? (z.B. Ohne Zucker, Hafermilch, extra Eis)</p>
+        <input type="text" id="specialNote" placeholder="Deine Notiz hier...">
+        <button class="confirm-btn" onclick="confirmAddToCart()">Hinzufügen</button>
+        <p style="font-size: 0.8rem; color: #888; margin-top: 10px; cursor: pointer;" onclick="closeModal('noteModal')">Abbrechen</p>
+    </div>
+</div>
+
+<div id="reviewModal" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-top:0; color: var(--primary);">Bestell-Check</h2>
+        <div id="review-list" style="text-align: left; max-height: 250px; overflow-y: auto; margin-bottom: 10px;"></div>
+        <p style="border-top: 1px solid #eee; padding-top: 10px;"><strong>Gesamt: <span id="modal-total">0.00</span>€</strong></p>
+        <input type="text" id="tableInput" placeholder="Tisch-Nummer oder Name">
+        <button class="confirm-btn" style="background:#25D366" onclick="sendWhatsApp()">An WhatsApp senden</button>
+        <p style="font-size: 0.8rem; color: #888; margin-top: 15px; cursor: pointer;" onclick="closeModal('reviewModal')">Weiter einkaufen</p>
     </div>
 </div>
 
 <div class="cart-bar" id="cart-bar">
-    <div>Items: <span id="cart-count">0</span> | <strong><span id="cart-total">0.00</span>€</strong></div>
-    <button class="checkout-btn" onclick="openModal()">Bestellen</button>
+    <div>Total: <strong><span id="cart-total">0.00</span>€</strong></div>
+    <button class="checkout-btn" onclick="openReview()">Bestellen</button>
 </div>
 
 <script>
     const menuData = [
-        { category: "Frühstück", items: [
-            { name: "Piazza Classic", price: 16.50, desc: "Frühstücksteller mit allem Drum und Dran" },
-            { name: "Bircher Müsli", price: 6.50, desc: "Mit Äpfeln, Rosinen & Nüssen" },
-            { name: "Sunrise Bowl", price: 7.50, desc: "Joghurt, Früchte & Granola" }
+        { category: "Frühstück & Bowls", items: [
+            { name: "Bircher Müsli", price: 6.50, desc: "Frische Äpfel, Rosinen & Nüsse" },
+            { name: "Sunrise Bowl", price: 7.50, desc: "Joghurt, frische Früchte & Granola" },
+            { name: "Brotzeit Piazza", price: 8.50, desc: "Brotkorb, hausgemachte Marmelade, Honig, Butter" },
+            { name: "Herzhaft & Heimat", price: 11.50, desc: "Wurst & Käse, Gurken, Tomaten, Brötchen & Butter" },
+            { name: "Piazza Classic", price: 16.50, desc: "Frühstücksteller mit Ei nach Wahl, Schinken, Käse, Avocado & Brot" }
         ]},
-        { category: "Drinks", items: [
-            { name: "Piazza Spritz", price: 9.50, desc: "Vibrant & Refreshing" },
-            { name: "Cappuccino", price: 3.50, desc: "Klassisch italienisch" },
-            { name: "Matcha Latte", price: 4.50, desc: "Creamy & Green" }
+        { category: "Heißgetränke", items: [
+            { name: "Espresso", price: 2.90 },
+            { name: "Doppelter Espresso", price: 3.60 },
+            { name: "Cappuccino", price: 3.50 },
+            { name: "Latte Macchiato", price: 3.90 },
+            { name: "Matcha Latte", price: 4.50 },
+            { name: "Strawberry Matcha Latte", price: 6.50 },
+            { name: "Heiße Schokolade", price: 3.50 }
+        ]},
+        { category: "Spritz & Aperitif", items: [
+            { name: "Piazza Spritz", price: 9.50 },
+            { name: "Aperol Spritz", price: 8.50 },
+            { name: "Limoncello Spritz", price: 8.50 },
+            { name: "Hugo", price: 8.50 },
+            { name: "Lillet Wildberry", price: 8.50 }
+        ]},
+        { category: "Essen & Snacks", items: [
+            { name: "Crostini Mix", price: 8.50 },
+            { name: "Bruschetta", price: 6.50 },
+            { name: "Antipasti Sticks", price: 5.50 },
+            { name: "Apero Platte (2 Pers)", price: 15.50 },
+            { name: "Finger Food Platte", price: 15.50 }
+        ]},
+        { category: "Cocktails", items: [
+            { name: "Mojito", price: 7.50 },
+            { name: "Caipirinha", price: 7.50 },
+            { name: "Espresso Martini", price: 10.50 },
+            { name: "Sex on the Beach", price: 10.50 },
+            { name: "Piazza Mule", price: 11.50 }
         ]}
     ];
 
     let cart = [];
-    const WHATSAPP_NUMBER = "491713232044"; // ÄNDERN AUF DEINE NUMMER
+    let tempItem = null;
+    const WHATSAPP_NUMBER = "491713232044"; // DEINE NUMMER HIER
 
     function renderMenu() {
         const container = document.getElementById('menu-container');
@@ -88,76 +125,76 @@
             let html = `<h2 class="category-title">${cat.category}</h2>`;
             cat.items.forEach(item => {
                 html += `<div class="menu-item">
-                    <div class="item-info"><h3>${item.name}</h3><p>${item.desc}</p><span class="price">${item.price.toFixed(2)}€</span></div>
-                    <button class="add-btn" onclick="addToCart('${item.name}', ${item.price})">+</button>
+                    <div class="item-info"><h3>${item.name}</h3>${item.desc ? `<p>${item.desc}</p>` : ''}<span class="price">${item.price.toFixed(2)}€</span></div>
+                    <button class="add-btn" onclick="askForNote('${item.name}', ${item.price})">+</button>
                 </div>`;
             });
             container.innerHTML += html;
         });
     }
 
-    function addToCart(name, price) {
-        cart.push({ id: Date.now(), name, price });
+    function askForNote(name, price) {
+        tempItem = { name, price };
+        document.getElementById('noteItemName').innerText = name;
+        document.getElementById('specialNote').value = "";
+        document.getElementById('noteModal').style.display = 'flex';
+    }
+
+    function confirmAddToCart() {
+        const note = document.getElementById('specialNote').value;
+        cart.push({ id: Date.now() + Math.random(), ...tempItem, note: note });
+        closeModal('noteModal');
         updateCartBar();
     }
 
     function removeFromCart(id) {
-        cart = cart.filter(item => item.id !== id);
+        cart = cart.filter(i => i.id !== id);
         updateCartBar();
         renderReviewList();
-        if(cart.length === 0) closeModal();
+        if(cart.length === 0) closeModal('reviewModal');
     }
 
     function updateCartBar() {
-        const cartBar = document.getElementById('cart-bar');
-        if (cart.length > 0) {
-            cartBar.style.display = 'flex';
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            document.getElementById('cart-total').innerText = total.toFixed(2);
-            document.getElementById('cart-count').innerText = cart.length;
-        } else {
-            cartBar.style.display = 'none';
-        }
+        const total = cart.reduce((sum, i) => sum + i.price, 0);
+        document.getElementById('cart-total').innerText = total.toFixed(2);
+        document.getElementById('cart-bar').style.display = cart.length > 0 ? 'flex' : 'none';
     }
 
-    function openModal() {
+    function openReview() {
         document.getElementById('reviewModal').style.display = 'flex';
         renderReviewList();
     }
-
-    function closeModal() { document.getElementById('reviewModal').style.display = 'none'; }
 
     function renderReviewList() {
         const list = document.getElementById('review-list');
         list.innerHTML = "";
         cart.forEach(item => {
-            list.innerHTML += `<div class="review-item">
-                <span>${item.name}</span>
-                <div>
-                    <span style="margin-right:10px">${item.price.toFixed(2)}€</span>
-                    <span class="delete-btn" onclick="removeFromCart(${item.id})">Löschen</span>
+            list.innerHTML += `<div style="padding:10px 0; border-bottom:1px solid #eee">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong>${item.name}</strong>
+                    <span>${item.price.toFixed(2)}€ <span class="del-x" onclick="removeFromCart(${item.id})">✕</span></span>
                 </div>
+                ${item.note ? `<span class="note-text">↳ ${item.note}</span>` : ''}
             </div>`;
         });
-        const total = cart.reduce((sum, item) => sum + item.price, 0);
-        document.getElementById('modal-total').innerText = total.toFixed(2);
+        document.getElementById('modal-total').innerText = cart.reduce((s, i) => s + i.price, 0).toFixed(2);
     }
+
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
     function sendWhatsApp() {
         const table = document.getElementById('tableInput').value || "Nicht angegeben";
-        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        let text = `*NEUE BESTELLUNG - PIAZZA*%0A---%0A📍 *Tisch/Name:* ${table}%0A---%0A`;
         
-        // Group items for clear message
-        const summary = {};
-        cart.forEach(item => { summary[item.name] = (summary[item.name] || 0) + 1; });
+        cart.forEach(item => {
+            text += `• *${item.name}* ${item.note ? `(_${item.note}_)` : ''}%0A`;
+        });
         
-        let text = `*PIAZZA BESTELLUNG*%0A---%0A📍 *Tisch:* ${table}%0A---%0A`;
-        for (const [name, qty] of Object.entries(summary)) {
-            text += `${qty}x ${name}%0A`;
-        }
-        text += `---%0A💰 *Total: ${total.toFixed(2)}€*`;
+        const total = cart.reduce((s, i) => s + i.price, 0).toFixed(2);
+        text += `---%0A💰 *Gesamt: ${total}€*`;
         
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+        closeModal('reviewModal');
     }
 
     renderMenu();
